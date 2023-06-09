@@ -20,5 +20,7 @@ pip install sdmetrics
 
 ## Lancement
 Lancez : 
-$ python interfaceGraphiqueEtAlgoGenerationDonnees.py 
+ 
+<code>python interfaceGraphiqueEtAlgoGenerationDonnees.py</code>
+
 Puis, suivez les instructions sur la page web locale : http://127.0.0.1:5000
