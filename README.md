@@ -7,7 +7,7 @@
 - panda
 - flask
 
-## Installation (pip -> python 3)
+## Installation 
 conda create -n "synthetic"
 conda activate synthetic
 conda install -c pytorch -c conda-forge sdv
