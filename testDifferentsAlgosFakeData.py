@@ -1,3 +1,10 @@
+
+# This program generates synthetic data, from different algorithms, based on SDV.
+# Generated data are keeped in the static/fake_data directory.
+# Generated images are keeped in static/img.
+
+# By Oriane Dermy 09/06/2023
+
 #requirement : pythonX, sdmetrics, sdv, csv, panda, pip install -U kaleido
 
 import sdv
@@ -54,7 +61,7 @@ def  evaluation(real_data, synthetic_data, metadata, column_name, column_names):
 		column_name=column_name,
 		metadata=metadata
 	)
-	# Enregistrer la figure dans un fichier d'image
+	# Record the figure inside a file
 	fig.write_image('static/img/column_plot.png')
 	#fig.show()
 	
@@ -84,14 +91,14 @@ def createSynthetiser(name, metadata):
 	if(name=='GaussianCopula'):
 		synthesizer = GaussianCopulaSynthesizer(
 			metadata, # required
-			enforce_min_max_values=True, #controle que données synthétiques gardent max/min des données réelles
-			enforce_rounding=False, #controle que les données synthétiques ont même nombre de décimale que données réelles
-			#numerical_distributions={ #donne forme de la distribution pour les données numériques
+			enforce_min_max_values=True, #control that synthetic data keep max/min  of real data
+			enforce_rounding=True, #control that synthetic dada have se same decimal numbers than real data
+			#numerical_distributions={ #give the distribution shape for numeric data
 			#	'amenities_fee': 'beta', #norm' 'beta', 'truncnorm', 'uniform', 'gamma' or 'gaussian_kde'
 			#	'checkin_date': 'uniform'
 			#},
-			#locale : liste qui montre type de données qu'on utilise.
-			default_distribution='norm' #defaut : beta, sinon les memes autres preuvent etre mises
+			#locale : list that show the data type we use
+			default_distribution='norm' #defaut : beta, others distribution can be choose
 		)
 		#synthesizer.get_parameters()
 		#metadata = synthesizer.get_metadata()
@@ -99,8 +106,8 @@ def createSynthetiser(name, metadata):
 		synthesizer = CTGANSynthesizer(
 			metadata, # required
 			enforce_rounding=False,
-			epochs=500, #nombre de fois où on entraine GAN (défaut 300)
-			verbose=True #ecris résultat à chaque époch
+			epochs=500, #number of time that GAN learn (default 300)
+			verbose=False #write result at each epoch 
 			#locale, enforce_min_max, CUDA (T/F)
 		)
 		
@@ -109,7 +116,7 @@ def createSynthetiser(name, metadata):
 			metadata, # required
 			enforce_min_max_values=True,
 			enforce_rounding=False,
-			epochs=500 #300 par defaut
+			epochs=500 #300 per default
 			#locales, CUDA
 		)
 		
@@ -131,7 +138,7 @@ def createSynthetiser(name, metadata):
 			name=nameAlgo
 			#locales=['en_US', 'en_CA', 'fr_FR'] #https://faker.readthedocs.io/en/master/locales.html
 		)
-		#utilise GaussianCopula avec paramètres fixés : 
+		#use GaussianCopula with fixed parameters: 
 		#GaussianCopulaSynthesizer(
 		#GaussianCopulaSynthesizer(
 		#	enforce_min_max_values=True,
@@ -177,39 +184,38 @@ else:
 		#column_names = [?,?]
 	#print(real_data)
 
-#creation modèle de génération de données
+#Create the model to generate data
 synthesizer = createSynthetiser(nameAlgo, metadata)
 
 print(f"name algo:\n {nameAlgo}")
 
-#apprentissage du modèle
+#learn the model
 synthesizer.fit(
 	data=real_data
 )
 
-# génération de données synthétiques
+# generate synthetic data
 synthetic_data = synthesizer.sample(
 	num_rows=500
 )
 
-#affichage des données générées
+#plot synthetic data
 #print(synthetic_data)
 
 
-#enregistrement des données
+##record data 
 dernier_separateur = dataPath.rfind('/')
-# Extraire la sous-chaîne après le dernier séparateur
+# Extraction of the sub-string containing the name of the file
 nameFile = dataPath[dernier_separateur + 1:]
-
-print(nameFile)
+#print(nameFile)
 synthetic_data.to_csv('static/fake_data/fake_'+nameAlgo+'_'+nameFile,index=False)
 
-#évaluation des données
+#Data evaluation
 evaluation(real_data, synthetic_data, metadata, column_name, column_names)
 
 
-#enregistrement du générateur
+#record generator
 #synthesizer.save('synthetiser' + nameAlgo + '.pkl')
-#récupération du générateur
+#retrieve generator
 #synthesizer = SingleTablePreset.load('synthetiser' + nameAlgo + '.pkl')
 

@@ -1,3 +1,10 @@
+#This program launches a user interface allowing users to adapt parameters for the generation of synthetic data.
+#After users choose the parameters, the program calls the testDifferentalgosFakeData.py algorithm to generate the synthetic data.
+#Then, a new page appears showing some reports about the generated data.
+#Generated data are keeped in the static/fake_data directory.
+
+# By Oriane Dermy 09/06/2023
+
 #requirement : pythonX, sdmetrics, sdv, csv, panda, flask
 
 import sdv
@@ -19,7 +26,6 @@ from sdv.single_table import TVAESynthesizer
 from sdv.single_table import CopulaGANSynthesizer
 from sdv.single_table import GaussianCopulaSynthesizer
 
-
 from sdmetrics.reports import utils
 from sdmetrics import load_demo
 from sdmetrics.reports.single_table import QualityReport
@@ -29,14 +35,13 @@ from sdv.evaluation.single_table import get_column_plot
 from sdv.evaluation.single_table import get_column_pair_plot
 
 
-#fonction pour fermer python quand on ferme la fenêtre et qui arrête flask_server
+#function to close the program & flask_server when we close the programm
 def handle_sigint(signal, frame):
     shutdown_flask_server()
 def shutdown_flask_server():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is not None:
         func()
-
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -49,11 +54,11 @@ def index():
 		dataType = request.form.get('dataType')
 		column_name = request.form.get('column_name')
 		column_names = request.form.get('column_names')
-		# Exécute le code Python
+		# Execution of the python program
 		result = execute_code(nameAlgo, dataPath, dataType, column_name, column_names)
-		# Supprime le fichier temporaire
+		# delete temporary code
 		os.remove('temp_code.py')
-		# Génère le chemin de l'image
+		# Generate images path
 		image_path = 'static/img/column_plot.png' 
 		image_path2 = 'static/img/column_pair_plot.png'    
 		image_path3 = 'static/img/column_shapes.png'
@@ -80,10 +85,3 @@ def execute_code(nameAlgo, dataPath, dataType, column_name, column_names):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-#enregistrement du générateur
-#synthesizer.save('synthetiser' + nameAlgo + '.pkl')
-#récupération du générateur
-#synthesizer = SingleTablePreset.load('synthetiser' + nameAlgo + '.pkl')
-

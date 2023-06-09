@@ -1,19 +1,26 @@
+<!--
+This user interface is called from the program interfaceGraphiqueEtAlgoGenerationDonnees.py to plot results of this program.
+It shows different reporting with images.
+
+By Oriane Dermy 09/06/2023
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Résultat</title>
+    <title>Results</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-        <h1>Résultats de l'exécution du code Python</h1>
+        <h1>Results :</h1>
 
-    <h2>Sortie du terminal :</h2>
+    <h2>Terminal output :</h2>
     <pre>{{ result }}</pre>
 
-    <h2>Images générées :</h2>
-    <img src={{image_path}} alt="Image générée d'une colonne"> <br>
-     <img src={{image_path2}} alt="Image générée d'une colonne par rapport à une autre"> <br>
-     <img src={{image_path3}} alt="Image générée représentant l'ensemble des colonnes">
+    <h2>Generated images :</h2>
+    <img src={{image_path}} alt="Generated image of a column plot"> 
+     <img src={{image_path2}} alt="Generated image of a column pair plot">
+     <img src={{image_path3}} alt="Generated image representing all columns">
 
 <script>
     window.onbeforeunload = function() {
