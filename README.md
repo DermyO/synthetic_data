@@ -7,7 +7,7 @@
 - panda
 - flask
 
-## Installation (pip -> python 3)
+## Installation 
 conda create -n "synthetic"
 conda activate synthetic
 conda install -c pytorch -c conda-forge sdv
@@ -19,4 +19,8 @@ pip install sdmetrics
 
 
 ## Lancement
-Lancez python interfaceGraphiqueEtAlgoGenerationDonnees.py et suivez les instructions sur la page web locale : http://127.0.0.1:5000
+Lancez : 
+ 
+<code>python interfaceGraphiqueEtAlgoGenerationDonnees.py</code>
+
+Puis, suivez les instructions sur la page web locale : http://127.0.0.1:5000
