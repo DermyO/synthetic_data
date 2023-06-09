@@ -1,4 +1,9 @@
 # synthetic_data
+
+Pour l'instant, contient les algorithmes de SDV pour la génération de données synthétique.
+Une interface graphique permet à l'utilisateur de sélectionner son fichier de données, afin d'avoir des données synthétiques qui correspondent.
+Une page affiche alors des rapports sur cette génération afin d'évaluer leur qualité.
+
 ## Requis
 - python
 - sdmetrics
