@@ -8,14 +8,14 @@
 - flask
 
 ## Installation 
-conda create -n "synthetic"
-conda activate synthetic
-conda install -c pytorch -c conda-forge sdv
-pip install flask
-pip install flask_bootstrap
-pip install panda
-pip install -U kaleido
-pip install sdmetrics
+<code>conda create -n "synthetic"
+ conda activate synthetic
+ conda install -c pytorch -c conda-forge sdv
+ pip install flask
+ pip install flask_bootstrap
+ pip install panda
+ pip install -U kaleido
+ pip install sdmetrics</code>
 
 
 ## Lancement
