@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interface utilisateur</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Interface utilisateur</h1>
+        <form method="post" action="/">
+            <div class="form-group">
+                <label for="nameAlgo">Nom de l'algorithme :</label>
+                <select class="form-control" id="nameAlgo" name="nameAlgo">
+                    <option value="FAST_ML">FAST_ML</option>
+                    <option value="GaussianCopula">GaussianCopula</option>
+                    <option value="CTGAN">CTGAN</option>
+                    <option value="TVAE">TVAE</option>
+                    <option value="CopulaGAN">CopulaGAN</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dataPath">Chemin vers les données (ex : data/real_data/data_Distinction.csv) : </label>
+                <input type="text" class="form-control" id="dataPath" name="dataPath" value="default">
+            </div>
+            <div class="form-group">
+                <label for="dataType">Type de données :</label>
+                <select class="form-control" id="dataType" name="dataType">
+                    <option value=".csv">.csv</option>
+                    <option value=".json">.json</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="column_name">Nom de la colonne que dont vous souhaitez afficher la distribution :</label>
+                <input type="text" class="form-control" id="column_name" name="column_name" value="amenities_fee">
+            </div>
+            <div class="form-group">
+                <label for="column_names">Nom des deux colonnes dont vous voulez afficher la répartition conjointe : </label>
+                <input type="text" class="form-control" id="column_names" name="column_names" value="['checkin_date', 'checkout_date']">
+            </div>
+            <button type="submit" class="btn btn-primary">Exécuter le code</button>
+        </form>
+    </div>
+</body>
+</html>

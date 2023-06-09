@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Résultat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+        <h1>Résultats de l'exécution du code Python</h1>
+
+    <h2>Sortie du terminal :</h2>
+    <pre>{{ result }}</pre>
+
+    <h2>Images générées :</h2>
+    <img src={{image_path}} alt="Image générée d'une colonne"> <br>
+     <img src={{image_path2}} alt="Image générée d'une colonne par rapport à une autre"> <br>
+     <img src={{image_path3}} alt="Image générée représentant l'ensemble des colonnes">
+
+<script>
+    window.onbeforeunload = function() {
+        // Effectuer une action avant la fermeture de la fenêtre
+        // Par exemple, envoyer une requête AJAX pour signaler la fermeture au serveur
+    }
+</script>
+
+</body>
+</html>
