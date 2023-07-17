@@ -15,17 +15,47 @@ By Oriane Dermy 09/06/2023
 <body>
     <div class="container">
         <h1>User Interface</h1>
+        
+        <script>
+          // Fonction appelée lorsqu'il y a un changement dans la sélection
+         function handleAlgorithmSelection() {
+         // Récupérer la valeur sélectionnée dans le formulaire
+            var selectedAlgorithm = document.getElementById("nameAlgo").value;
+        
+            // Sélectionner l'élément HTML où afficher le texte supplémentaire
+            var additionalInfo = document.getElementById("additionalInfo");
+        
+            // Vérifier si l'algorithme sélectionné est "TimeGan"
+            if (selectedAlgorithm === "TimeGan") {
+                // Afficher le texte supplémentaire
+                additionalInfo.innerHTML = "Attention, cet algorithme prend en entrée des données temporelles telles que :<br>" +
+                    "var1 var2 var3<br>" +
+                    "0.00 0.001 0.10<br>" +
+                    "0.01 0.02 0.08<br>" +
+                    "0.02 0.03 0.7<br>" +
+                    "..." <br>+
+                    "De plus, il s'agit d'un algorithme long en calcul, mais qui a l'avantage d'enregistrer la dynamique des données.";
+            } else {
+                // Réinitialiser le texte supplémentaire
+                additionalInfo.innerHTML = "";
+            }
+        }
+    </script>
+        
+        
         <form method="post" action="/">
             <div class="form-group">
                 <label for="nameAlgo">Algorithm :</label>
-                <select class="form-control" id="nameAlgo" name="nameAlgo">
+                <select class="form-control" id="nameAlgo" name="nameAlgo" onchange="handleAlgorithmSelection()">
                     <option value="FAST_ML">FAST_ML</option>
                     <option value="GaussianCopula">GaussianCopula</option>
                     <option value="CTGAN">CTGAN</option>
                     <option value="TVAE">TVAE</option>
                     <option value="CopulaGAN">CopulaGAN</option>
+                    <option value="TimeGan">TimeGan</option>
                 </select>
             </div>
+            <p id="additionalInfo"></p>
             <div class="form-group">
                 <label for="dataPath">Data path (ex : data/real_data/data_Distinction.csv) : </label>
                 <input type="text" class="form-control" id="dataPath" name="dataPath" value="default">
@@ -47,6 +77,9 @@ By Oriane Dermy 09/06/2023
             </div>
             <button type="submit" class="btn btn-primary">Execute</button>
         </form>
+        
+        
+        
     </div>
 </body>
 </html>
