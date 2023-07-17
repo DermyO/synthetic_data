@@ -14,6 +14,7 @@ import warnings
 import subprocess
 import os
 import signal
+import pdb
 
 from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
@@ -54,14 +55,18 @@ def index():
 		dataType = request.form.get('dataType')
 		column_name = request.form.get('column_name')
 		column_names = request.form.get('column_names')
+		# delete previous temporary code
+		if os.path.exists('temp_code.py'):
+			os.remove('temp_code.py')
 		# Execution of the python program
 		result = execute_code(nameAlgo, dataPath, dataType, column_name, column_names)
-		# delete temporary code
 		os.remove('temp_code.py')
+		
 		# Generate images path
-		image_path = 'static/img/column_plot.png' 
-		image_path2 = 'static/img/column_pair_plot.png'    
-		image_path3 = 'static/img/column_shapes.png'
+		dataName = os.path.basename(dataPath).split('.')[0]
+		image_path = f"static/img/column_plot_{nameAlgo}_{dataName}.png"
+		image_path2 = f"static/img/column_pair_plot_{nameAlgo}_{dataName}.png"
+		image_path3 = f"static/img/column_shapes_{nameAlgo}_{dataName}.png"
 		return render_template('result.html', result=result, image_path=image_path, image_path2=image_path2, image_path3=image_path3)
 
 	return render_template('index.html')
@@ -69,14 +74,19 @@ def index():
 def execute_code(nameAlgo, dataPath, dataType, column_name, column_names):
 	with open('./testDifferentsAlgosFakeData.py', 'r') as f:
 		code = f.read()
-	print(f"from index, nameAlgo = {nameAlgo}")
-	code = code.replace("nameAlgo = 'FAST_ML'", "nameAlgo = '{}'".format(nameAlgo))
-	code = code.replace("dataPath = 'default'", "dataPath = '{}'".format(dataPath))
-	code = code.replace("dataType = '.csv'", "dataType = '{}'".format(dataType))
-	code = code.replace("column_name = 'amenities_fee'", "column_name ='{}'".format(column_name))
-	code = code.replace("column_names = ['checkin_date', 'checkout_date']", "column_names={}".format(column_names))
+	#print(column_names)
+	#print(f"from index, nameAlgo = {nameAlgo}")
+	code = code.split("nameAlgo = ", 1)[0] + "nameAlgo = '{}'".format(nameAlgo) + "#"+ code.split("nameAlgo = ", 1)[1].split("'", 1)[1]
+	code = code.split("dataPath = ", 1)[0] + "dataPath = '{}'".format(dataPath) + "#"+ code.split("dataPath = ", 1)[1].split("'", 1)[1]
+	code = code.split("dataType = ", 1)[0] + "dataType = '{}'".format(dataType) + "#"+ code.split("dataType = ", 1)[1].split("'", 1)[1]
+	code = code.split("column_name = ", 1)[0] + "column_name = '{}'".format(column_name) + "#"+ code.split("column_name = ", 1)[1].split("'", 1)[1]
+	code = code.split("column_names = ", 1)[0] + "column_names = {}".format(column_names) + "#"+ code.split("column_names = ", 1)[1].split("'", 1)[1]
+	#code = code.replace("dataPath = 'default'", "dataPath = '{}'".format(dataPath))
+	#code = code.replace("dataType = '.csv'", "dataType = '{}'".format(dataType))
+	#code = code.replace("column_name = 'amenities_fee'", "column_name ='{}'".format(column_name))
+	#code = code.replace("column_names = ['checkin_date', 'checkout_date']", "column_names={}".format(column_names))
 	#print(code)
-	
+	#pdb.set_trace()
 	with open('temp_code.py', 'w') as f:
 		f.write(code)
 
