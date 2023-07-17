@@ -1,4 +1,3 @@
-
 # This program generates synthetic data, from different algorithms, based on SDV.
 # Generated data are keeped in the static/fake_data directory.
 # Generated images are keeped in static/img.
@@ -11,6 +10,9 @@ import sdv
 import csv
 import pandas as pd
 import warnings
+import subprocess
+import pdb
+import os
 
 from sdv.datasets.demo import download_demo
 from sdv.metadata import SingleTableMetadata
@@ -32,9 +34,15 @@ from sdv.evaluation.single_table import evaluate_quality
 from sdv.evaluation.single_table import get_column_plot
 from sdv.evaluation.single_table import get_column_pair_plot
 
+DEBUG=1
 
-def  evaluation(real_data, synthetic_data, metadata, column_name, column_names):
-	
+
+
+def executeProgramInsideCondaEnv(program, conda_env):
+	command = f"conda run -n {conda_env} python {program}"
+	subprocess.run(command, shell=True)
+
+def  evaluation(real_data, synthetic_data, metadata, column_name, column_names, dataName,nameAlgo):
 	quality_report = evaluate_quality(
 		real_data,
 		synthetic_data,
@@ -54,7 +62,13 @@ def  evaluation(real_data, synthetic_data, metadata, column_name, column_names):
 	
 	s+= f"\n Diagnostic report: \n {diagnostic_report.get_results()}"
 	print(s)
-	
+	# record diagnostic report inside the file.
+	fichier = open(f"static/résultats/diagnostic_report__{nameAlgo}_{dataName}.txt", "w")
+	fichier.write(s)
+	fichier.close()
+
+	#print(metadata)
+	#pdb.set_trace()
 	fig = get_column_plot(
 		real_data=real_data,
 		synthetic_data=synthetic_data,
@@ -62,7 +76,7 @@ def  evaluation(real_data, synthetic_data, metadata, column_name, column_names):
 		metadata=metadata
 	)
 	# Record the figure inside a file
-	fig.write_image('static/img/column_plot.png')
+	fig.write_image(f"static/img/column_plot_{nameAlgo}_{dataName}.png")
 	#fig.show()
 	
 	fig = get_column_pair_plot(
@@ -71,20 +85,24 @@ def  evaluation(real_data, synthetic_data, metadata, column_name, column_names):
 		column_names= column_names,
 		metadata=metadata
 	)
-	fig.write_image('static/img/column_pair_plot.png')
+	fig.write_image(f"static/img/column_pair_plot_{nameAlgo}_{dataName}.png")
 	#fig.show()
 	
 	fig = quality_report.get_visualization(property_name='Column Shapes')
-	fig.write_image('static/img/column_shapes.png')
+	fig.write_image(f"static/img/column_shapes_{nameAlgo}_{dataName}.png")
+
+def evaluation2(real_data, synthetic_data):
+	real_data_str = real_data.to_string(index=False)
+	synthetic_data_str = synthetic_data.to_string(index=False)
+	# Appel de la fonction dans programme2.py
+	metrics_result = subprocess.call(['conda', 'run', '-n', 'TimeGan2', 'python3', '~/software/git/TimeGAN/eval_only.py', 'eval_only', real_data_str, synthetic_data_str])
 
 def  evaluationSimple(real_data, synthetic_data, metadata, column_name, column_names):
-
 	quality_report = evaluate_quality(
 		real_data,
 		synthetic_data,
 		metadata
 	)
-
 	print(quality_report)
 
 def createSynthetiser(name, metadata):
@@ -132,6 +150,8 @@ def createSynthetiser(name, metadata):
 			epochs=500,
 			verbose=True
 		)
+	elif(name=='TimeGan'):
+		synthesizer= []
 	else:
 		synthesizer = SingleTablePreset(
 			metadata,
@@ -149,6 +169,7 @@ def createSynthetiser(name, metadata):
 
 def retrieveDataFromFile(dataPath, dataType):
 	if(dataType=='.csv'):
+		#pdb.set_trace()
 		dataframe = pd.read_csv(dataPath)
 		metadata = SingleTableMetadata()
 		metadata.detect_from_csv(filepath=dataPath)
@@ -160,15 +181,15 @@ def retrieveDataFromFile(dataPath, dataType):
 
 warnings.filterwarnings("ignore")
 
-nameAlgo = 'FAST_ML'
-dataPath = 'default'   # 'data/real_data/data_Distinction.csv'
+nameAlgo = 'FAST_ML'#'TimeGan' #
+dataPath =  'data/real_data/stock_data.csv'#'data/real_data/distinction_modif_data.csv'#'data/real_data/data_Distinction.csv' #'default'   #
 dataType = '.csv'
+dataName = os.path.basename(dataPath).split('.')[0]
 
+column_name = 'Volume'#'totClicks'#'amenities_fee'  #'totClicks_108'#
+column_names = ['High','Low']#['scores','delays']#['checkin_date', 'checkout_date']  #['score_10', 'delay_10']#
 
-column_name = 'amenities_fee'  #'totClicks_108'
-column_names = ['checkin_date', 'checkout_date']  #['score_10', 'delay_10']
-
-#recupération données
+#data recover
 if(dataPath=='default'):
 	real_data, metadata = download_demo(
 		modality='single_table',
@@ -178,44 +199,55 @@ if(dataPath=='default'):
 	column_names=['checkin_date', 'checkout_date']
 else:
 	real_data, metadata= retrieveDataFromFile(dataPath, dataType)
-	#if(column_name ==''):
-		#keys = metadata.columns.keys()
-		#column_name = '?'
-		#column_names = [?,?]
-	#print(real_data)
 
 #Create the model to generate data
 synthesizer = createSynthetiser(nameAlgo, metadata)
 
 print(f"name algo:\n {nameAlgo}")
 
-#learn the model
-synthesizer.fit(
-	data=real_data
-)
-
-# generate synthetic data
-synthetic_data = synthesizer.sample(
-	num_rows=500
-)
+if(nameAlgo=='TimeGan'):
+	if(dataPath == 'data/real_data/data_Distinction.csv'): #/!\ A besoin d'être optimisé! 
+		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name distinction --seq_len 39 --module gru --hidden_dim 3 --num_layer 2 --iteration 1000 --batch_size 10 --metric_iteration 10"
+	elif(dataPath == 'data/real_data/stock_data.csv'):
+	# TODO need to execute python3 main_timegan.py --data_name stock --seq_len 24 --module gru
+		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name stock --seq_len 24 --module gru --hidden_dim 24 --num_layer 3 --iteration 50000 --batch_size 128  --metric_iteration 10"
+	else:
+		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name energy --seq_len 24 --module gru --hidden_dim 24 --num_layer 3 --iteration 50000 --batch_size 128  --metric_iteration 10"
+	#command = f"python {program}"
+	#subprocess.run(command, shell=True)
+	conda_env = "TimeGan2"
+	executeProgramInsideCondaEnv(program, conda_env)
+	synthetic_data, metadata= retrieveDataFromFile('~/software/git/TimeGAN/data/synthetic_data/' + dataName+ '_synthetic_TimeGan.csv', '.csv') 
+	real_data, metadata = retrieveDataFromFile('~/software/git/TimeGAN/data/real_data/'+dataName+'_data.csv', '.csv')
+	#column_name = 'Open'
+	#column_names = ['High', 'Low']
+else:
+	#learn the model
+	synthesizer.fit(
+		data=real_data
+	)
+	# generate synthetic data
+	synthetic_data = synthesizer.sample(
+		num_rows=500
+	)
 
 #plot synthetic data
 #print(synthetic_data)
 
 
-##record data 
-dernier_separateur = dataPath.rfind('/')
-# Extraction of the sub-string containing the name of the file
-nameFile = dataPath[dernier_separateur + 1:]
-#print(nameFile)
-synthetic_data.to_csv('static/fake_data/fake_'+nameAlgo+'_'+nameFile,index=False)
+	##record data 
+	dernier_separateur = dataPath.rfind('/')
+	# Extraction of the sub-string containing the name of the file
+	nameFile = dataPath[dernier_separateur + 1:]
+	#print(nameFile)
+	synthetic_data.to_csv('static/fake_data/fake_'+nameAlgo+'_'+nameFile,index=False)
+	#pdb.set_trace()
 
-#Data evaluation
-evaluation(real_data, synthetic_data, metadata, column_name, column_names)
-
+	#Data evaluation
+	evaluation(real_data, synthetic_data, metadata, column_name, column_names, dataName,nameAlgo)
+	#evaluation2(real_data, synthetic_data)
 
 #record generator
 #synthesizer.save('synthetiser' + nameAlgo + '.pkl')
 #retrieve generator
 #synthesizer = SingleTablePreset.load('synthetiser' + nameAlgo + '.pkl')
-
