@@ -1,4 +1,9 @@
 # synthetic_data
+
+Pour l'instant, contient les algorithmes de SDV pour la génération de données synthétiques.
+Une interface graphique permet à l'utilisateur de sélectionner son fichier de données, afin d'avoir des données synthétiques qui correspondent.
+Une page affiche alors des rapports sur cette génération afin d'évaluer leur qualité.
+
 ## Requis
 - python
 - sdmetrics
@@ -8,14 +13,14 @@
 - flask
 
 ## Installation 
-conda create -n "synthetic"
-conda activate synthetic
-conda install -c pytorch -c conda-forge sdv
-pip install flask
-pip install flask_bootstrap
-pip install panda
-pip install -U kaleido
-pip install sdmetrics
+<code>conda create -n "synthetic"
+ conda activate synthetic
+ conda install -c pytorch -c conda-forge sdv
+ pip install flask
+ pip install flask_bootstrap
+ pip install panda
+ pip install -U kaleido
+ pip install sdmetrics</code>
 
 
 ## Lancement
