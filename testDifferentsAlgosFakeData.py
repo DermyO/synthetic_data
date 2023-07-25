@@ -181,13 +181,13 @@ def retrieveDataFromFile(dataPath, dataType):
 
 warnings.filterwarnings("ignore")
 
-nameAlgo = 'FAST_ML'#'TimeGan' #
-dataPath =  'data/real_data/stock_data.csv'#'data/real_data/distinction_modif_data.csv'#'data/real_data/data_Distinction.csv' #'default'   #
+nameAlgo = 'TimeGan' # 'FAST_ML'
+dataPath =  'data/real_data/distinction_modif_data.csv'#'data/real_data/stock_data.csv'#'data/real_data/data_Distinction.csv' #'default' 
 dataType = '.csv'
 dataName = os.path.basename(dataPath).split('.')[0]
-
-column_name = 'Volume'#'totClicks'#'amenities_fee'  #'totClicks_108'#
-column_names = ['High','Low']#['scores','delays']#['checkin_date', 'checkout_date']  #['score_10', 'delay_10']#
+print(dataName)
+column_name = 'totClicks'#'Volume'#'amenities_fee'  #'totClicks_108'
+column_names = ['scores','delays']#['High','Low']#['checkin_date', 'checkout_date']  #['score_10', 'delay_10']
 
 #data recover
 if(dataPath=='default'):
@@ -207,7 +207,9 @@ print(f"name algo:\n {nameAlgo}")
 
 if(nameAlgo=='TimeGan'):
 	if(dataPath == 'data/real_data/data_Distinction.csv'): #/!\ A besoin d'être optimisé! 
-		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name distinction --seq_len 39 --module gru --hidden_dim 3 --num_layer 2 --iteration 1000 --batch_size 10 --metric_iteration 10"
+		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name distinction --seq_len 39 --module gru --hidden_dim 3 --num_layer 2 --iteration 50000 --batch_size 10 --metric_iteration 10"
+	elif(dataPath == 'data/real_data/distinction_modif_data.csv'):
+		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name distinction_modif_data --seq_len 39 --module gru --hidden_dim 3 --num_layer 50000 --iteration 100 --batch_size 10 --metric_iteration 10"
 	elif(dataPath == 'data/real_data/stock_data.csv'):
 	# TODO need to execute python3 main_timegan.py --data_name stock --seq_len 24 --module gru
 		program = "~/software/git/TimeGAN/TimeGanForInterface.py --data_name stock --seq_len 24 --module gru --hidden_dim 24 --num_layer 3 --iteration 50000 --batch_size 128  --metric_iteration 10"
@@ -217,8 +219,8 @@ if(nameAlgo=='TimeGan'):
 	#subprocess.run(command, shell=True)
 	conda_env = "TimeGan2"
 	executeProgramInsideCondaEnv(program, conda_env)
-	synthetic_data, metadata= retrieveDataFromFile('~/software/git/TimeGAN/data/synthetic_data/' + dataName+ '_synthetic_TimeGan.csv', '.csv') 
-	real_data, metadata = retrieveDataFromFile('~/software/git/TimeGAN/data/real_data/'+dataName+'_data.csv', '.csv')
+	synthetic_data, metadata= retrieveDataFromFile('data/synthetic_data/' + dataName+ '_synthetic_TimeGan.csv', '.csv') 
+	real_data, metadata = retrieveDataFromFile('data/real_data/'+dataName+'.csv', '.csv')
 	#column_name = 'Open'
 	#column_names = ['High', 'Low']
 else:
@@ -235,17 +237,17 @@ else:
 #print(synthetic_data)
 
 
-	##record data 
-	dernier_separateur = dataPath.rfind('/')
-	# Extraction of the sub-string containing the name of the file
-	nameFile = dataPath[dernier_separateur + 1:]
-	#print(nameFile)
-	synthetic_data.to_csv('static/fake_data/fake_'+nameAlgo+'_'+nameFile,index=False)
-	#pdb.set_trace()
+##record data 
+dernier_separateur = dataPath.rfind('/')
+# Extraction of the sub-string containing the name of the file
+nameFile = dataPath[dernier_separateur + 1:]
+#print(nameFile)
+synthetic_data.to_csv('static/fake_data/fake_'+nameAlgo+'_'+nameFile,index=False)
+#pdb.set_trace()
 
-	#Data evaluation
-	evaluation(real_data, synthetic_data, metadata, column_name, column_names, dataName,nameAlgo)
-	#evaluation2(real_data, synthetic_data)
+#Data evaluation
+evaluation(real_data, synthetic_data, metadata, column_name, column_names, dataName,nameAlgo)
+#evaluation2(real_data, synthetic_data)
 
 #record generator
 #synthesizer.save('synthetiser' + nameAlgo + '.pkl')
