@@ -38,5 +38,13 @@ Le dossier "static/img" contient les différents graphes du rapport d'analyse.
 
 Le dossier "static/résultats" contient les rapports en .txt concernant ces données synthétiques.
 
+## Limites
+L'algorithme TimeGan ne fonctionne que pour des données temporelles (séries temporel). 
+
+L'utilisation de cet algorithme necessite d'adapter ces paramètres. Ils sont déjà adapter pour les données "stock_data" et "energy".
+
+Par défaut, nous avons mis des paramètres permettant que l'algorithme tourne rapidement, mais pour avoir une bonne qualité de données, cela necessite d'autres paramètres.
+
+
 ## TODO 
 Actuellement, conversion d'un code matlab en python afin d'ajouter la méthode ProMP.
